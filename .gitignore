@@ -1,0 +1,12 @@
+.vscode
+.venv/
+.venv-build/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+installer/output/
+*.pyc
+*.onnx
+PolishEditor_background_self_test.log
