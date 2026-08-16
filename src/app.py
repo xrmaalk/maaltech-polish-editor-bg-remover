@@ -9,7 +9,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageDraw, ImageOps, ImageTk
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 from src import __version__
@@ -41,16 +41,17 @@ TRANSPARENT_FILE_TYPES = [
 
 
 def resource_path(relative: str) -> Path:
+    """Resolve resource path for both source runs and PyInstaller bundles."""
     base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
     return base / relative
 
 
 def enable_windows_dpi_awareness() -> None:
+    """Enable DPI awareness on Windows only."""
     if sys.platform != "win32":
         return
     try:
         import ctypes
-
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
     except Exception:
         pass
@@ -64,10 +65,22 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.title(f"{APP_NAME} {__version__}")
         self.geometry("1180x760")
         self.minsize(980, 680)
-        icon_path = resource_path("assets/app.ico")
-        if icon_path.exists():
+
+        # Cross-platform icon handling
+        icon_ico = resource_path("assets/app.ico")
+        icon_png = resource_path("assets/maaltech_mascot_icon.png")
+
+        if sys.platform == "win32" and icon_ico.exists():
             try:
-                self.iconbitmap(str(icon_path))
+                self.iconbitmap(str(icon_ico))
+            except Exception:
+                pass
+        elif icon_png.exists():
+            try:
+                img = Image.open(icon_png)
+                # Keep a reference so the PhotoImage is not garbage-collected
+                self._icon_photo = ImageTk.PhotoImage(img)
+                self.iconphoto(True, self._icon_photo)
             except Exception:
                 pass
 
@@ -214,12 +227,14 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.fallback_var = ctk.BooleanVar(value=True)
         self.tone_var = ctk.BooleanVar(value=True)
         self.background_var = ctk.StringVar(value="Keep")
+
         ctk.CTkCheckBox(
             controls,
             text="Limit processing to detected faces",
             variable=self.face_only_var,
             command=self._face_mode_changed,
         ).grid(row=6, column=0, padx=18, pady=8, sticky="w")
+
         self.fallback_checkbox = ctk.CTkCheckBox(
             controls,
             text="Use skin tones if no face is found",
@@ -227,6 +242,7 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         )
         self.fallback_checkbox.grid(
             row=7, column=0, padx=18, pady=8, sticky="w")
+
         ctk.CTkCheckBox(
             controls,
             text="Apply gentle finishing adjustments",
@@ -239,12 +255,14 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
             anchor="w",
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=9, column=0, padx=18, pady=(18, 6), sticky="ew")
+
         self.background_selector = ctk.CTkSegmentedButton(
             controls,
             values=["Keep", "Remove"],
             variable=self.background_var,
         )
         self.background_selector.grid(row=10, column=0, padx=18, sticky="ew")
+
         ctk.CTkLabel(
             controls,
             text="Remove creates transparency; save as PNG or WebP.",
@@ -267,6 +285,7 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         )
         self.process_button.grid(
             row=13, column=0, padx=18, pady=(0, 10), sticky="ew")
+
         self.save_button = ctk.CTkButton(
             controls,
             text="Save as…",
@@ -280,6 +299,7 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         )
         self.save_button.grid(row=14, column=0, padx=18,
                               pady=(0, 10), sticky="ew")
+
         ctk.CTkButton(
             controls,
             text="Reset adjustments",
@@ -302,6 +322,7 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
         status = ctk.CTkFrame(self, fg_color="transparent")
         status.grid(row=2, column=0, padx=24, pady=(0, 14), sticky="ew")
         status.grid_columnconfigure(0, weight=1)
+
         self.status_label = ctk.CTkLabel(
             status,
             text="Ready",
@@ -309,6 +330,7 @@ class PolishEditorApp(ctk.CTk, TkinterDnD.DnDWrapper):
             font=ctk.CTkFont(size=12),
         )
         self.status_label.grid(row=0, column=0, sticky="ew")
+
         self.progress_bar = ctk.CTkProgressBar(
             status, width=190, mode="indeterminate")
         self.progress_bar.grid(row=0, column=1, padx=(16, 0))
