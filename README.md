@@ -64,3 +64,24 @@ python tools\generate_icon.py --source assets\replacement.png
 ```
 
 The output remains an automated image effect. Face and skin-tone detection can vary with pose, lighting, and camera color processing, so the Before/After preview should be reviewed before saving.
+
+## Linux & ChromeOS
+
+The application runs on Linux (including the ChromeOS Linux container / Crostini).
+
+### Run from source
+
+1. Install system packages (Debian/Ubuntu/ChromeOS):
+
+   ```bash
+   sudo apt update
+   sudo apt install -y python3 python3-venv python3-pip python3-tk \
+     libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 libgomp1
+   ```
+
+2. Allow file execution permissions:
+
+```bash
+   chmod +x run_app.sh
+   ./run_app.sh
+```

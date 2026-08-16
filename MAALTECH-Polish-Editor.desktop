@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=MAALTECH Polish Editor
+GenericName=Image Polish Editor
+Comment=Natural-looking local image refinement, face-aware polishing and background removal
+Exec=PolishEditor %F
+Icon=maaltech_mascot_icon
+Terminal=false
+Categories=Graphics;Photography;ImageProcessing;
+MimeType=image/jpeg;image/png;image/webp;image/bmp;image/tiff;image/x-tiff;
+Keywords=polish;skin;background;remover;ai;local;
+StartupNotify=true
+StartupWMClass=PolishEditor
