@@ -1,5 +1,5 @@
 #define MyAppName "MAALTECH Polish Editor"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "1.1.2"
 #define MyAppPublisher "MAALTECH"
 #define MyAppExeName "PolishEditor.exe"
 
@@ -13,7 +13,7 @@ DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=output
-OutputBaseFilename=PolishEditorSetup
+OutputBaseFilename=PolishEditorSetup-v1.1.2
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern

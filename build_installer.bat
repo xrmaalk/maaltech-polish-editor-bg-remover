@@ -25,5 +25,5 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Installer ready: installer\output\PolishEditorSetup.exe
+echo Installer ready: installer\output\PolishEditorSetup-v1.1.2.exe
 pause

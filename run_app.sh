@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Development launcher for MAALTECH Polish Editor on Linux / ChromeOS
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -7,11 +8,13 @@ if [ ! -d ".venv" ]; then
     python3 -m venv .venv
 fi
 
+# shellcheck disable=SC1091
 source .venv/bin/activate
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip --quiet
 python -m pip install -r requirements.txt
 
-# Optional: first-time system deps reminder
-echo "If you hit missing libraries, install: python3-tk libgl1 libglib2.0-0 (Debian/Ubuntu/ChromeOS)"
+echo "If the UI fails to start, install system packages:"
+echo "  sudo apt install -y python3-tk libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 libgomp1"
+echo
 
-python Polish_Editor.py "$@"
+exec python Polish_Editor.py "$@"

@@ -1,12 +1,41 @@
-.vscode
+# Virtual environments
 .venv/
 .venv-build/
+
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
-build/
+*.egg-info/
+.eggs/
 dist/
+build/
+*.egg
+
+# PyInstaller / packaging
+*.manifest
+*.spec.bak
+linux-package/
 installer/output/
-*.pyc
-*.onnx
 PolishEditor_background_self_test.log
+
+# Models & caches (downloaded on first use)
+*.onnx
+.cache/
+pooch/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Local test images
+*.jpg
+*.jpeg
+*.png
+!assets/*.png
+!assets/*.ico
