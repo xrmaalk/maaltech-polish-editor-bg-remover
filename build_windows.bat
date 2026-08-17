@@ -39,7 +39,7 @@ if exist "%ISCC%" (
     echo.
     echo Build complete:
     echo   Portable EXE: dist\PolishEditor.exe
-    echo   Installer:    installer\output\PolishEditorSetup.exe
+    echo   Installer:    installer\output\PolishEditorSetup-v1.1.2.exe
 ) else (
     echo.
     echo The portable EXE is ready at dist\PolishEditor.exe

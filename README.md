@@ -1,77 +1,37 @@
-# MAALTECH Polish Editor
+# MAALTECH Polish Editor v1.1.2
 
-Polish Editor turns the MAALTECH `Polish_Editor.py` image routine project into a Windows desktop application.
+Natural-looking local image refinement for portraits and product shots.  
+Face-aware skin polish, adjustable texture retention, optional AI background removal, and transparent PNG/WebP output — all processed on your machine.
 
-It includes drag-and-drop loading, before/after previews, adjustable polish and texture controls, face detection, optional background removal, transparent-PNG preservation, and background processing so the interface remains responsive.
+**Supported platforms**
 
-## Usage Method 1: Run from source on Windows
+- Windows 10 / 11 (x64) – portable EXE + Inno Setup installer  
+- Linux (Ubuntu / Debian / Fedora and ChromeOS Crostini) x64 – portable binary + user-local install package
 
-1. Install 64-bit Python 3.11 or newer from (https://www.python.org/downloads/). During installation, select **Add Python to PATH**.
+## Features
+
+- Drag-and-drop image loading
+- Before / After preview
+- Adjustable polish strength and texture retention
+- Face detection with optional skin-tone fallback
+- Optional background removal (`u2net_human_seg` via rembg)
+- Transparent PNG / WebP preservation
+- Fully offline after the first background-removal model download
+- Responsive UI (processing runs in a background thread)
+
+## Quick start – run from source
+
+### Windows
+
+1. Install 64-bit Python 3.11 or newer from https://www.python.org/downloads/  
+   (tick **Add Python to PATH** during installation).
 2. Double-click `run_app.bat`.
 
-The first launch creates a private Python environment and installs the required packages. Later launches reuse it.
+The first launch creates a private virtual environment and installs dependencies.
 
-## Usage Method 2: Build the Windows EXE and installer
+### Linux / ChromeOS (Crostini)
 
-1. Install 64-bit Python 3.11 or newer (https://www.python.org/downloads/).
-2. Install [Inno Setup 7](https://jrsoftware.org/isinfo.php) if you want the installer. The portable EXE can be built without it.
-3. Double-click `build_windows.bat`.
-
-Build outputs:
-
-- `dist\PolishEditor.exe` — standalone portable application.
-- `installer\output\PolishEditorSetup.exe` — per-user Windows installer with Start menu/uninstall entries.
-
-The build script runs `PolishEditor.exe --self-test-background` before creating
-the installer. If rembg or a native ONNX dependency was omitted from the frozen
-EXE, the build stops and writes `PolishEditor_background_self_test.log`.
-
-If Inno Setup was installed after the portable EXE was built, run `build_installer.bat` to create only the installer.
-
-The generated EXE and installer are unsigned development builds. Windows SmartScreen may show an "unknown publisher" notice until the release is signed with a trusted Windows code-signing certificate.
-
-## Use the application
-
-1. Open or drop a supported JPG, PNG, WebP, BMP, or TIFF image.
-2. Adjust polish strength and texture retention.
-3. Leave **Limit processing to detected faces** enabled for portraits. The fallback option can process visible skin tones when a frontal face is not detected.
-4. Under **Background**, choose **Keep** or **Remove**. Remove produces transparency and automatically suggests PNG when saving.
-5. Select **Polish image**, compare the Before and After views, and then select **Save as…**.
-
-All image processing happens locally and images are never uploaded. Background removal uses the `u2net_human_seg` model. Rembg downloads that model on the first background-removal run and caches it on the computer; later runs can work offline. The official rembg documentation describes this first-use model download behavior.
-
-## Developer notes
-
-- Main GUI: `src/app.py`
-- Processing engine: `src/processing.py`
-- Mascot icon source: `assets/maaltech_mascot_icon.png`
-- Icon generator: `tools/generate_icon.py`
-- PyInstaller configuration: `PolishEditor.spec`
-- Inno Setup installer: `installer/PolishEditor.iss`
-- Test command: `python -m pytest tests`
-
-`build_windows.bat` automatically regenerates `assets/app.ico` from the bundled
-MAALTECH mascot source before building. To regenerate only the icon, run:
-
-```bat
-python tools\generate_icon.py
-```
-
-You can also supply replacement square PNG artwork without editing the script:
-
-```bat
-python tools\generate_icon.py --source assets\replacement.png
-```
-
-The output remains an automated image effect. Face and skin-tone detection can vary with pose, lighting, and camera color processing, so the Before/After preview should be reviewed before saving.
-
-## Linux & ChromeOS
-
-The application runs on Linux (including the ChromeOS Linux container / Crostini).
-
-### Run from source
-
-1. Install system packages (Debian/Ubuntu/ChromeOS):
+1. Install system packages (Debian / Ubuntu / ChromeOS example):
 
    ```bash
    sudo apt update
@@ -79,9 +39,131 @@ The application runs on Linux (including the ChromeOS Linux container / Crostini
      libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 libgomp1
    ```
 
-2. Allow file execution permissions:
+2. Make the launcher executable and start the app:
 
-```bash
+   ```bash
    chmod +x run_app.sh
    ./run_app.sh
+   ```
+
+## Build installers
+
+### Windows
+
+Prerequisites:
+
+- 64-bit Python 3.11+
+- [Inno Setup 7](https://jrsoftware.org/isinfo.php) (optional but required for the installer)
+
+```bat
+build_windows.bat
 ```
+
+Outputs:
+
+| Artifact | Location |
+|----------|----------|
+| Portable EXE | `dist\PolishEditor.exe` |
+| Installer | `installer\output\PolishEditorSetup-v1.1.2.exe` |
+
+The build runs a background-removal self-test before creating the installer.  
+If the test fails, `PolishEditor_background_self_test.log` is written and the process stops.
+
+If you already have the EXE and only need the installer, run `build_installer.bat`.
+
+> The generated EXE and installer are unsigned development builds. Windows SmartScreen may show an “unknown publisher” warning until a code-signing certificate is applied.
+
+### Linux
+
+```bash
+chmod +x build_linux.sh
+./build_linux.sh
+```
+
+Outputs:
+
+| Artifact | Location |
+|----------|----------|
+| Portable binary | `dist/PolishEditor` |
+| Install package | `dist/MAALTECH-Polish-Editor-v1.1.2-linux-x64.tar.gz` |
+
+#### Installing the Linux package on a target machine
+
+```bash
+tar -xzf MAALTECH-Polish-Editor-v1.1.2-linux-x64.tar.gz
+./install.sh
+```
+
+This installs into `~/.local` (no root required):
+
+- Binary → `~/.local/bin/PolishEditor`
+- Desktop entry → `~/.local/share/applications/`
+- Icon → `~/.local/share/icons/hicolor/256x256/apps/`
+
+Uninstall with the included `uninstall.sh` or by deleting the files above.
+
+## Using the application
+
+1. Open or drop a supported JPG, PNG, WebP, BMP or TIFF image.
+2. Adjust **Polish strength** and **Texture retention**.
+3. Leave **Limit processing to detected faces** enabled for portraits.  
+   Enable the fallback option to process visible skin tones when a frontal face is not detected.
+4. Under **Background** choose **Keep** or **Remove**.  
+   Remove produces transparency and automatically suggests PNG when saving.
+5. Click **Polish image**, compare the Before / After views, then **Save as…**.
+
+All processing is local. Images are never uploaded.  
+Background removal uses the `u2net_human_seg` model; rembg downloads it on first use and caches it for offline runs thereafter.
+
+## Project layout
+
+```
+Polish_Editor.py          # Application entry point
+src/
+  __init__.py             # __version__ = "1.1.2"
+  app.py                  # CustomTkinter GUI
+  processing.py           # Image engine (polish + rembg)
+assets/
+  maaltech_mascot_icon.png
+  app.ico                 # Generated multi-resolution Windows icon
+tools/
+  generate_icon.py
+installer/
+  PolishEditor.iss        # Inno Setup script (Windows)
+PolishEditor.spec         # PyInstaller (Windows)
+PolishEditor-linux.spec   # PyInstaller (Linux)
+build_windows.bat
+build_installer.bat
+build_linux.sh
+run_app.bat / run_app.sh
+requirements.txt
+requirements-build.txt
+tests/
+```
+
+## Developer notes
+
+- Regenerate the Windows icon only:
+
+  ```bat
+  python tools\generate_icon.py
+  ```
+
+  or supply replacement artwork:
+
+  ```bat
+  python tools\generate_icon.py --source assets\replacement.png
+  ```
+
+- Run unit tests:
+
+  ```bash
+  python -m pytest tests
+  ```
+
+- The face / skin-tone detection is heuristic. Always review the Before / After preview before saving.
+
+## License & attribution
+
+Copyright (c) 2026 MAALTECH.  
+Background removal powered by [rembg](https://github.com/danielgatis/rembg) and the `u2net_human_seg` model.
